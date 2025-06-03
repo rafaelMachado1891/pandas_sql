@@ -97,13 +97,32 @@ tipo_dados = {
 
 df = df.astype(tipo_dados)
 
-# Agregação por código, descrição, ano, mês e grupo
-agregacao = df.groupby(
-    by=["codigo", "descricao", "ano", "mes", "grupo"], 
-    as_index=False
-).agg({"total_movimento": "sum"})
+selecao_colunas = ["codigo", "descricao", "data_baixa", "total_movimento", "grupo"]
 
-# Exibir o DataFrame final
-print(agregacao)
+df = df[selecao_colunas]
 
-df.to_csv("dados_movimento.csv")
+print(df)
+# conexao com o banco de dados de destino
+
+USERNAME_POSTGRE = os.getenv("USER_POSTGRE")
+PASSWORD_POSTGRE = quote_plus(os.getenv("PASSWORD_POSTGRE"))
+HOST_POSTGRE = os.getenv("HOST_POSTGRE")
+DB_POSTGRE = os.getenv("DB_POSTGRE")
+PORT_POSTGRE = os.getenv("PORT_POSTGRE")
+
+connection_string = f"postgresql://{USERNAME_POSTGRE}:{PASSWORD_POSTGRE}@{HOST_POSTGRE}:{PORT_POSTGRE}/{DB_POSTGRE}"
+
+target_engine = create_engine(connection_string)
+
+with target_engine.connect() as connection:
+    connection.execution_options(isolation_level="AUTOCOMMIT").execute(
+        text("DROP TABLE IF EXISTS MOVIMENTO CASCADE")
+    )
+
+df.to_sql(
+        name='MOVIMENTO',         
+        con=target_engine,           
+        schema=os.getenv('SCHEMA'),  
+        if_exists='replace',          
+        index=False                  
+)
