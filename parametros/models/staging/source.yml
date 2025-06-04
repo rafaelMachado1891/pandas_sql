@@ -1,0 +1,10 @@
+
+version: 2
+
+sources:
+  - name: db
+    database: "parametros_db"
+    schema: public
+    tables:
+      - name: MOVIMENTO
+      
