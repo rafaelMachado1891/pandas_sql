@@ -99,10 +99,15 @@ df = df.astype(tipo_dados)
 
 selecao_colunas = ["codigo", "descricao", "data_baixa", "total_movimento", "grupo"]
 
-
-
-
 df = df[selecao_colunas]
+
+ano = df["data_baixa"].dt.year
+
+mes = df["data_baixa"].dt.month
+
+df_agrupado_mes = df.groupby(by=["codigo", "ano", "mes"],as_index=False)['total_movimento'].agg(["sum","min","max", "mean", "std"])
+
+print(df_agrupado_mes)
 
 df = df.groupby(by=["codigo","descricao"],as_index=False)['total_movimento'].agg(["sum","min","max", "mean", "std"])
 
