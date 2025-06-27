@@ -97,21 +97,30 @@ tipo_dados = {
 
 df = df.astype(tipo_dados)
 
-selecao_colunas = ["codigo", "descricao", "data_baixa", "total_movimento", "grupo"]
+selecao_colunas = ["codigo", "descricao", "data_baixa", "total_movimento", "grupo","ano", "mes"]
 
 df = df[selecao_colunas]
 
-ano = df["data_baixa"].dt.year
+df_agrupado_mes = df.groupby(by=["codigo", "ano", "mes"],as_index=False)['total_movimento'].agg(["sum"])
 
-mes = df["data_baixa"].dt.month
+df_agrupado_mes = df_agrupado_mes.groupby(by=["codigo"],as_index=False)['sum'].agg(["sum","min","max","mean"])
 
-df_agrupado_mes = df.groupby(by=["codigo", "ano", "mes"],as_index=False)['total_movimento'].agg(["sum","min","max", "mean", "std"])
+rename_columns = {
+    "codigo": "codigo",
+    "sum": "total_movimento",
+    "min": "minimo_mes",
+    "max": "maximo_mes",
+    "mean": "media_mensal"
+}
 
-print(df_agrupado_mes)
+df_agrupado_mes.rename(columns=rename_columns, inplace=True)
 
 df = df.groupby(by=["codigo","descricao"],as_index=False)['total_movimento'].agg(["sum","min","max", "mean", "std"])
 
-print(df)
+df = df.merge(df_agrupado_mes,left_on=["codigo"],right_on=["codigo"],how='inner')
+
+df.to_csv("estoque_senai.csv",sep=",")
+
 # conexao com o banco de dados de destino
 
 USERNAME_POSTGRE = os.getenv("USER_POSTGRE")
