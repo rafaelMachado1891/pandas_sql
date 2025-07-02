@@ -104,11 +104,11 @@ df = df[selecao_colunas]
 print(df)
 # conexao com o banco de dados de destino
 
-USERNAME_POSTGRE = os.getenv("USER_POSTGRE")
-PASSWORD_POSTGRE = quote_plus(os.getenv("PASSWORD_POSTGRE"))
-HOST_POSTGRE = os.getenv("HOST_POSTGRE")
-DB_POSTGRE = os.getenv("DB_POSTGRE")
-PORT_POSTGRE = os.getenv("PORT_POSTGRE")
+USERNAME_POSTGRE = os.getenv("USER_POSTGRES")
+PASSWORD_POSTGRE = quote_plus(os.getenv("PASSWORD_POSTGRES"))
+HOST_POSTGRE = os.getenv("HOST_POSTGRES")
+DB_POSTGRE = os.getenv("DB_POSTGRES")
+PORT_POSTGRE = os.getenv("PORT_POSTGRES")
 
 connection_string = f"postgresql://{USERNAME_POSTGRE}:{PASSWORD_POSTGRE}@{HOST_POSTGRE}:{PORT_POSTGRE}/{DB_POSTGRE}"
 
