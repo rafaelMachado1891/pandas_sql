@@ -2,8 +2,8 @@
 version: 2
 
 sources:
-  - name: db
-    database: "parametros_db"
+  - name: parametros_db
+    database: "parametrosdb"
     schema: public
     tables:
       - name: MOVIMENTO
