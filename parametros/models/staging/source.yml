@@ -7,4 +7,6 @@ sources:
     schema: public
     tables:
       - name: MOVIMENTO
+      - name: ESTATISTICAS_DIA
+      - name: ESTATISTICAS_MENSAL
       
