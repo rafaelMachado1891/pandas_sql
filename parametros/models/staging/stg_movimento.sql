@@ -10,10 +10,10 @@ with source_data as (
 tabela_transformada as(
 select 
     cast(codigo as text) as codigo,
-    cast(descricao as text),
-    cast(data_baixa as date),
+    cast(descricao as text) as descricao,
+    cast(data_baixa as date) as data_baixa,
     cast(total_movimento as float) as quantidade,
-    cast(grupo  as text) 
+    cast(grupo  as text)  as grupo
 from source_data
 
 )
