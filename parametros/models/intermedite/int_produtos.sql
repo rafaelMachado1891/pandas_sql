@@ -2,7 +2,7 @@ with produtos as (
     select 
         codigo,
         min(descricao) as descricao
-    from stg_movimento
+    from {{ ref('stg_movimento') }}
     group by codigo
 )
 

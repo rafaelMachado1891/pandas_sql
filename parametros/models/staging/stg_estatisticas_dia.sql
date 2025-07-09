@@ -18,7 +18,7 @@ select
     round(cast(mediana as decimal),2) as mediana,
     cast(contagem as numeric),
     cast(q1 as decimal) as primeiro_quartil,
-    cast(q3 as decimal) as terceiro_quatil
+    cast(q3 as decimal) as terceiro_quartil
 from source_data
 
 )

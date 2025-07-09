@@ -1,8 +1,19 @@
-with produtos as (
+with mart_produtos as (
     select
-        codigo,
-        MIN(descricao) as descricao
-    from {{ ref('int_movimento') }}
-    group by codigo
+        *
+    from {{ ref('int_produtos') }}
+),
+estatisticas as (
+    select
+        *
+    from {{ ref('int_estatisticas')}}
 )
-select * from produtos
+select 
+    a.codigo,
+    a.descricao,
+    b.soma,
+    b.soma_mensal,
+    b.media_mensal,
+    b.media_dia
+
+from mart_produtos a join estatisticas b on a.codigo = b.codigo 
