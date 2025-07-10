@@ -1,12 +1,12 @@
 with mart_produtos as (
     select
         *
-    from {{ ref('int_produtos') }}
+    from public.int_produtos
 ),
 estatisticas as (
     select
         *
-    from {{ ref('int_estatisticas')}}
+    from public.int_estatisticas
 ),
 resultado as (
     SELECT 
@@ -15,8 +15,9 @@ resultado as (
         a.grupo,
         b.*
     FROM mart_produtos a
-    JOIN estatisticas b ON a.codigo b.codigo
+    JOIN estatisticas b ON a.codigo = b.codigo
 )
 select * from resultado
+
 
 
