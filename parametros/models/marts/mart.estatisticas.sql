@@ -10,14 +10,35 @@ estatisticas as (
 ),
 resultado as (
     SELECT 
-        a.codigo,
+        a.codigo as codigo_item,
         a.descricao,
         a.grupo,
         b.*
     FROM mart_produtos a
     JOIN estatisticas b ON a.codigo = b.codigo
 )
-select * from resultado
+select 
+    codigo_item,
+    descricao,
+    grupo,
+    soma,
+    maximo,
+    minimo,
+    media_dia,
+    desvio_padrao,
+    mediana,
+    contagem,
+    primeiro_quartil,
+    terceiro_quartil,
+    maximo_mensal,
+    minimo_mensal,
+    media_mensal,
+    desvio_padrao_mensal,
+    mediana_mensal,
+    contagem_mensal,
+    primeiro_quartil_mensal,
+    terceiro_quartil_mensal
+from resultado
 
 
 
