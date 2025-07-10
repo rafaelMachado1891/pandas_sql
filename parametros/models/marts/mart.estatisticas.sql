@@ -7,13 +7,16 @@ estatisticas as (
     select
         *
     from {{ ref('int_estatisticas')}}
+),
+resultado as (
+    SELECT 
+        a.codigo,
+        a.descricao,
+        a.grupo,
+        b.*
+    FROM mart_produtos a
+    JOIN estatisticas b ON a.codigo b.codigo
 )
-select 
-    a.codigo,
-    a.descricao,
-    b.soma,
-    b.soma_mensal,
-    b.media_mensal,
-    b.media_dia
+select * from resultado
 
-from mart_produtos a join estatisticas b on a.codigo = b.codigo 
+
