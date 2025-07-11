@@ -97,7 +97,7 @@ tipo_dados = {
 
 df = df.astype(tipo_dados)
 
-selecao_colunas = ["codigo", "data_baixa", "total_movimento", "grupo"]
+selecao_colunas = ["codigo", "descricao" ,"data_baixa", "total_movimento", "grupo"]
 
 df = df[selecao_colunas]
 
@@ -107,7 +107,11 @@ agregacao_mensal = df.copy()
 
 agregacao_mensal['mes_ano'] = agregacao_mensal['data_baixa'].dt.to_period('M')
 
-agregacao_mensal = agregacao_mensal.groupby(by=['codigo', 'mes_ano'], as_index=False).agg(
+agregacao_mensal['mes_ano'] = agregacao_mensal['mes_ano'].dt.to_timestamp()
+
+agregacao_mensal = agregacao_mensal.groupby(by=['codigo', 'mes_ano', 'grupo'], as_index=False).agg(total_movimento = ('total_movimento', 'sum'))
+
+agregacao_mensal = agregacao_mensal.groupby(by=['codigo'], as_index=False).agg(
     soma=('total_movimento', 'sum'), 
     minimo_mes=('total_movimento','min'),
     maximo_mes=('total_movimento','max'),
@@ -118,6 +122,8 @@ agregacao_mensal = agregacao_mensal.groupby(by=['codigo', 'mes_ano'], as_index=F
     q1_mes=('total_movimento', lambda x: x.quantile(0.25)),
     q3_mes=('total_movimento', lambda x: x.quantile(0.75))
 )
+
+print(agregacao_mensal)
 
 agregacao = selecao.groupby(by=['codigo'],as_index=False).agg(
     soma=('total_movimento', 'sum'), 
@@ -133,8 +139,6 @@ agregacao = selecao.groupby(by=['codigo'],as_index=False).agg(
 
 selecao = agregacao
 
-print(agregacao_mensal)
-
 # conexao com o banco de dados de destino
 
 USERNAME_POSTGRE = os.getenv("USER_POSTGRES")
@@ -148,10 +152,10 @@ connection_string = f"postgresql://{USERNAME_POSTGRE}:{PASSWORD_POSTGRE}@{HOST_P
 target_engine = create_engine(connection_string)
 
 with target_engine.execution_options(isolation_level="AUTOCOMMIT").connect() as connection:
-    connection.execute(text('TRUNCATE TABLE "MOVIMENTO"'))    
-    connection.execute(text('DROP TABLE IF EXISTS "ESTATITICAS_DIA"'))
-    connection.execute(text('DROP TABLE IF EXISTS "ESTATITICAS_MENSAL"'))
-    
+    connection.execute(text('DROP TABLE IF EXISTS "MOVIMENTO" CASCADE'))    
+    connection.execute(text('DROP TABLE IF EXISTS "ESTATISTICAS_DIA" CASCADE'))
+    connection.execute(text('DROP TABLE IF EXISTS "ESTATISTICAS_MENSAL" CASCADE'))
+        
 df.to_sql(
         name='MOVIMENTO',         
         con=target_engine,           
@@ -159,6 +163,8 @@ df.to_sql(
         if_exists='append',          
         index=False                  
 )
+
+df.to_csv('movimento.csv',sep=';',index=False)
 
 selecao.to_sql(
         name='ESTATISTICAS_DIA',
@@ -168,10 +174,10 @@ selecao.to_sql(
         index=False  
 )
 
-selecao.to_sql(
+agregacao_mensal.to_sql(
         name='ESTATISTICAS_MENSAL',
         con=target_engine,           
         schema=os.getenv('SCHEMA'),  
-        if_exists='append',          
-        index=False  
+       if_exists='append',          
+       index=False  
 )
