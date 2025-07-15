@@ -1,0 +1,96 @@
+WITH movimento_mes AS (
+	SELECT 
+		codigo,
+		descricao,
+		SUM(quantidade) AS quantidade,
+		EXTRACT(MONTH FROM "data_baixa") AS mes,
+		EXTRACT(YEAR FROM "data_baixa") AS ano,
+		grupo
+	FROM {{ ref('int_movimento') }}
+	GROUP BY codigo, descricao, grupo, EXTRACT(MONTH FROM "data_baixa"), EXTRACT(YEAR FROM "data_baixa")
+),
+media_global AS (
+	SELECT
+		codigo,
+		CAST(media_mensal AS int) media_mensal,
+        desvio_padrao_mensal
+	FROM {{ ref('int_estatisticas') }}
+),
+media_movel_3_meses AS (
+	SELECT 
+		codigo,
+		descricao,
+		quantidade,
+        grupo,
+		mes,
+		ano,
+		AVG(quantidade) OVER(
+			PARTITION BY codigo
+			ORDER BY ano, mes
+			ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+		) AS media_movel_3_meses
+	FROM movimento_mes	
+),
+media_movel_6_meses AS (
+	SELECT 
+		codigo,
+		descricao,
+		quantidade,
+		mes,
+		ano,
+		AVG(quantidade) OVER(
+			PARTITION BY codigo
+			ORDER BY ano, mes
+			ROWS BETWEEN 5 PRECEDING AND CURRENT ROW
+		) AS media_movel_6_meses
+	FROM movimento_mes	
+),
+resultado_media_3_meses AS (
+	SELECT
+		codigo,
+		descricao,
+        grupo,
+		CAST(media_movel_3_meses AS INT) AS media_movel_3_meses,
+		mes,
+		ano
+	FROM media_movel_3_meses
+	WHERE
+		ano = EXTRACT(YEAR FROM CURRENT_DATE) AND
+		mes = EXTRACT(MONTH FROM CURRENT_DATE)
+),
+resultado_media_6_meses AS (
+	SELECT
+		codigo,
+		descricao,
+		CAST(media_movel_6_meses AS INT) AS media_movel_6_meses,
+		mes,
+		ano
+	FROM media_movel_6_meses
+	WHERE
+		ano = EXTRACT(YEAR FROM CURRENT_DATE) AND
+		mes = EXTRACT(MONTH FROM CURRENT_DATE)
+),
+resultado AS (
+	SELECT 
+		a.codigo,
+		a.descricao,
+        b.grupo,
+		c.media_mensal,
+		a.media_movel_6_meses,
+		b.media_movel_3_meses,
+        C.desvio_padrao_mensal
+	FROM resultado_media_6_meses a
+	JOIN resultado_media_3_meses b
+	ON a.codigo = b.codigo
+	JOIN media_global c
+	ON a.codigo = c.codigo
+)
+
+SELECT 
+		*,
+        media_mensal + (1*desvio_padrao_mensal) AS calculo_estoque,
+        CASE WHEN media_movel_3_meses > media_mensal THEN 'media ultimos 3 meses maior que media global'
+			 WHEN media_movel_6_meses > media_mensal THEN 'media ultimos 6 meses maior que a media global'
+		ELSE 'media maior que o levantamento do ultimo semestre'
+		END AS observacao
+FROM resultado
