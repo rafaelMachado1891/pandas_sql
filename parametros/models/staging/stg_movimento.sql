@@ -13,7 +13,9 @@ select
     cast(descricao as text) as descricao,
     cast(data_baixa as date) as data_baixa,
     cast(total_movimento as float) as quantidade,
-    cast(grupo  as text)  as grupo
+    cast(grupo  as text)  as grupo,
+    cast(estoque_minimo as int) as estoque_minimo,
+    tempo_reposicao
 from source_data
 
 )

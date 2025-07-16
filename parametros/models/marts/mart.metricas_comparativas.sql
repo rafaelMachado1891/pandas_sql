@@ -9,6 +9,15 @@ WITH movimento_mes AS (
 	FROM {{ ref('int_movimento') }}
 	GROUP BY codigo, descricao, grupo, EXTRACT(MONTH FROM "data_baixa"), EXTRACT(YEAR FROM "data_baixa")
 ),
+produtos AS (
+    SELECT 
+        codigo,
+        descricao,
+        estoque_minimo,
+        tempo_reposicao,
+        grupo
+    FROM {{ ref('int_produtos') }}
+),
 media_global AS (
 	SELECT
 		codigo,
@@ -75,6 +84,8 @@ resultado AS (
 		a.codigo,
 		a.descricao,
         b.grupo,
+        d.estoque_minimo,
+        d.tempo_reposicao,
 		c.media_mensal,
 		a.media_movel_6_meses,
 		b.media_movel_3_meses,
@@ -84,13 +95,21 @@ resultado AS (
 	ON a.codigo = b.codigo
 	JOIN media_global c
 	ON a.codigo = c.codigo
+    JOIN produtos d 
+    ON a.codigo = d.codigo
 )
 
 SELECT 
-		*,
-        media_mensal + (1*desvio_padrao_mensal) AS calculo_estoque,
+		codigo,
+        descricao,
+        grupo,
+        estoque_minimo,
+        tempo_reposicao,
+        media_mensal / 30 * tempo_reposicao + (1*desvio_padrao_mensal) AS calculo_estoque,
+        
         CASE WHEN media_movel_3_meses > media_mensal THEN 'media ultimos 3 meses maior que media global'
 			 WHEN media_movel_6_meses > media_mensal THEN 'media ultimos 6 meses maior que a media global'
 		ELSE 'media maior que o levantamento do ultimo semestre'
 		END AS observacao
 FROM resultado
+ORDER BY grupo, media_mensal DESC
