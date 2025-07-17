@@ -24,8 +24,7 @@ query = """
             D.Descricao,
             d.Custo_Medio,
             A.Quantidade,
-            r.DATA_BAIXA,
-        
+            r.DATA_BAIXA,        
             YEAR(r.DATA_BAIXA)  AS ano,
             MONTH(r.DATA_BAIXA) AS mes
         FROM 
@@ -55,7 +54,9 @@ query = """
         SELECT 
             a.codigo,
             a.descricao,
-            b.Descricao AS grupo
+            b.Descricao AS grupo,
+            a.Estoque_Minimo AS estoque_minimo,
+            a.LT  AS tempo_reposicao
         FROM Produtos a 
         JOIN Grupos b
         ON a.Grupo = b.Codigo
@@ -69,9 +70,10 @@ query = """
             a.grupo,
             b.Quantidade AS total_movimento,
             b.Data_Baixa AS data_baixa,
+            a.estoque_minimo,
+            a.tempo_reposicao,
             b.ano,
             b.mes
-
         FROM tabela_produtos a 
         JOIN movimento_estoque b
         ON a.codigo = b.Codigo
@@ -92,15 +94,16 @@ tipo_dados = {
     'mes': int,
     'ano': int,
     'total_movimento': int,
-    'grupo': str
+    'grupo': str,
+    'estoque_minimo': int,
+    'tempo_reposicao': int
 }
 
 df = df.astype(tipo_dados)
 
-selecao_colunas = ["codigo", "descricao" ,"data_baixa", "total_movimento", "grupo"]
+selecao_colunas = ["codigo", "descricao" ,"data_baixa", "total_movimento", "grupo", "estoque_minimo", "tempo_reposicao" ]
 
 df = df[selecao_colunas]
-
 selecao = df.copy()
 
 agregacao_mensal = df.copy()
@@ -163,8 +166,6 @@ df.to_sql(
         if_exists='append',          
         index=False                  
 )
-
-df.to_csv('movimento.csv',sep=';',index=False)
 
 selecao.to_sql(
         name='ESTATISTICAS_DIA',

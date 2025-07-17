@@ -1,0 +1,12 @@
+
+version: 2
+
+sources:
+  - name: parametros_db
+    database: "parametrosdb"
+    schema: public
+    tables:
+      - name: MOVIMENTO
+      - name: ESTATISTICAS_DIA
+      - name: ESTATISTICAS_MENSAL
+      

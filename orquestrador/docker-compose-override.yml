@@ -1,0 +1,10 @@
+services:
+  scheduler:
+    volumes:
+      - ./dbt/parametros:/usr/local/orquestrador/dbt/parametros
+  dag-processor:
+    volumes:
+      - ./dbt/parametros:/usr/local/orquestrador/dbt/parametros
+  webserver:
+    volumes:
+      - ./dbt/parametros:/usr/local/orquestrador/dbt/parametros
