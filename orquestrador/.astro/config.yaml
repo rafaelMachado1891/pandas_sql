@@ -1,2 +1,6 @@
 project:
     name: orquestrador
+
+mounts:
+  - source: ./dbt/parametros
+    target: /usr/local/orquestrador/dbt/parametros

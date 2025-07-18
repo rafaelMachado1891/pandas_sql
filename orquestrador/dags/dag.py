@@ -30,7 +30,7 @@ profile_config = profile_config_dev if dbt_env == "dev" else profile_config_prod
 
 my_cosmos_dag = DbtDag(
     project_config=ProjectConfig(
-        dbt_project_path="/usr/local/orquestrador/dbt/parametros",
+        dbt_project_path="/usr/local/airflow/dbt/parametros",
         project_name="parametros",
     ),
     profile_config=profile_config,
