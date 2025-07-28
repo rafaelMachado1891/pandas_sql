@@ -1,11 +1,17 @@
 services:
   scheduler:
+    environment:
+      - AIRFLOW__SDK__ENABLE_DATASETS=False
     volumes:
-      - ./dbt/parametros:/usr/local/orquestrador/dbt/parametros
+      - ./dbt/parametros:/usr/local/airflow/dbt/parametros
   dag-processor:
+    environment:
+      - AIRFLOW__SDK__ENABLE_DATASETS=False
     volumes:
-      - ./dbt/parametros:/usr/local/orquestrador/dbt/parametros
+      - ./dbt/parametros:/usr/local/airflow/dbt/parametros
   webserver:
+    environment:
+      - AIRFLOW__SDK__ENABLE_DATASETS=False
     volumes:
-      - ./dbt/parametros:/usr/local/orquestrador/dbt/parametros
+      - ./dbt/parametros:/usr/local/airflow/dbt/parametros
 
