@@ -115,4 +115,5 @@ SELECT
 		ELSE 'estoque minimo acima do recomendado'
 		END AS observacao
 FROM resultado
-ORDER BY grupo, media_mensal DESC
+WHERE grupo = 'SUSEPE'
+ORDER BY descricao
