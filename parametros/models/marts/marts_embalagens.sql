@@ -115,5 +115,5 @@ SELECT
 		ELSE 'estoque minimo acima do recomendado'
 		END AS observacao
 FROM resultado
-WHERE grupo = 'EMBALAGENS'
+WHERE grupo = 'EMBALAGEM'
 ORDER BY descricao
