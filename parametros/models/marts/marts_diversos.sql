@@ -115,5 +115,5 @@ SELECT
 		ELSE 'estoque minimo acima do recomendado'
 		END AS observacao
 FROM resultado
-WHERE grupo not in( 'ELABORACAO', 'INJETADO', 'SUSEPE', 'EMBALAGENS')
-ORDER BY descricao
+WHERE grupo not in( 'ALMOXARIFADO ELABORACAO', 'INJETADO', 'SUSEPE', 'EMBALAGEM')
+ORDER BY grupo, descricao
