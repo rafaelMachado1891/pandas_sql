@@ -2,11 +2,12 @@
 version: 2
 
 sources:
-  - name: parametros_db
+  - name: parametrosdb
     database: "parametrosdb"
     schema: public
     tables:
       - name: MOVIMENTO
       - name: ESTATISTICAS_DIA
       - name: ESTATISTICAS_MENSAL
+      - name: COMPRAS
       

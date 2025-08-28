@@ -1,0 +1,23 @@
+with source_data as (
+
+    select * from {{ source('parametrosdb', 'COMPRAS') }}
+),
+
+tabela_transformada as(
+select 
+    cast(numero as int) as numero_oc,
+    cast(codigo as text) as codigo_produto,
+    cast(descricao as text) as descricao,
+    cast(un as text) as un,
+    cast(saldo as int) as saldo,
+    cast(preco as float) as preco,
+    cast(valor_total  as text)  as valor_total ,
+    cast(data_entrega as date) as data_entrega,
+    cast(razao as text) as fornecedor,
+    cast(cod_terceiro as int) as cod_terceiro
+from source_data
+
+)
+
+select *
+from tabela_transformada

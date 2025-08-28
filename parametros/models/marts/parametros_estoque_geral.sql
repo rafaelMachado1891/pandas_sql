@@ -110,10 +110,9 @@ SELECT
         media_movel_3_meses,
         media_movel_6_meses,
         CASE WHEN 
-            media_mensal/ 22 * tempo_reposicao + (1*desvio_padrao_mensal) > 
+            media_mensal / 22 * tempo_reposicao + (1*desvio_padrao_mensal) > 
             estoque_minimo THEN 'estoque minimo abaixo do recomendado' 
 		ELSE 'estoque minimo acima do recomendado'
 		END AS observacao
 FROM resultado
-WHERE grupo not in( 'ALMOXARIFADO ELABORACAO', 'INJETADO', 'SUSEPE', 'EMBALAGEM')
-ORDER BY grupo, descricao
+ORDER BY descricao

@@ -4,7 +4,7 @@
 
 with source_data as (
 
-    select * from {{ source('parametros_db', 'MOVIMENTO') }}
+    select * from {{ source('parametrosdb', 'MOVIMENTO') }}
 ),
 
 tabela_transformada as(
