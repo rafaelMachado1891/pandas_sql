@@ -17,7 +17,7 @@ resultado AS (
         a.descricao,
 		a.quantidade,
         a.valor_total,
-        b.calculo_estoque,
+        COALESCE(b.calculo_estoque, 0) AS calculo_estoque,
         CASE WHEN
             quantidade > B.calculo_estoque * 1.2 THEN 'VERIFICAR ORDEM DE COMPRA'
              ELSE 'OK'
@@ -27,4 +27,4 @@ resultado AS (
     ON a.codigo_produto = b.codigo
 )
 
-SELECT * FROM resultado WHERE 2, 1, 4
+SELECT * FROM resultado ORDER BY 2, 1, 4
