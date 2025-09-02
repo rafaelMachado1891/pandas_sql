@@ -11,7 +11,7 @@ password = quote_plus(os.getenv("DB_PASSWORD"))
 host = os.getenv("DB_HOST")
 database = os.getenv("DB_NAME")
 
-# URL de conexão com o banco de dados
+
 DATABASE_URL = f"mssql+pyodbc://{username}:{password}@{host}/{database}?driver=ODBC+Driver+17+for+SQL+Server"
 
 engine = create_engine(DATABASE_URL)
@@ -84,7 +84,6 @@ query = """
 with engine.connect() as connection:
     result = connection.execute(text(query))
     
-    # Carregar os resultados em um DataFrame
     df = pd.DataFrame(result.fetchall(), columns=result.keys())
     
 tipo_dados = {
@@ -142,8 +141,6 @@ agregacao = selecao.groupby(by=['codigo'],as_index=False).agg(
 
 selecao = agregacao
 
-# conexao com o banco de dados de destino
-
 USERNAME_POSTGRE = os.getenv("USER_POSTGRES")
 PASSWORD_POSTGRE = quote_plus(os.getenv("PASSWORD_POSTGRES"))
 HOST_POSTGRE = os.getenv("HOST_POSTGRES")
@@ -154,31 +151,37 @@ connection_string = f"postgresql://{USERNAME_POSTGRE}:{PASSWORD_POSTGRE}@{HOST_P
 
 target_engine = create_engine(connection_string)
 
+
 with target_engine.execution_options(isolation_level="AUTOCOMMIT").connect() as connection:
-    connection.execute(text('DROP TABLE IF EXISTS "MOVIMENTO" CASCADE'))    
+    
+    connection.execute(text('DROP TABLE IF EXISTS "MOVIMENTO" CASCADE'))      
     connection.execute(text('DROP TABLE IF EXISTS "ESTATISTICAS_DIA" CASCADE'))
     connection.execute(text('DROP TABLE IF EXISTS "ESTATISTICAS_MENSAL" CASCADE'))
-        
+
+
 df.to_sql(
-        name='MOVIMENTO',         
-        con=target_engine,           
-        schema=os.getenv('SCHEMA'),  
-        if_exists='append',          
-        index=False                  
+    name='MOVIMENTO',           
+    con=target_engine,            
+    schema=os.getenv('SCHEMA'), 
+    if_exists='append',         
+    index=False                 
 )
 
 selecao.to_sql(
-        name='ESTATISTICAS_DIA',
-        con=target_engine,           
-        schema=os.getenv('SCHEMA'),  
-        if_exists='append',          
-        index=False  
+    name='ESTATISTICAS_DIA',
+    con=target_engine,            
+    if_exists='append',         
+    index=False   
 )
 
 agregacao_mensal.to_sql(
-        name='ESTATISTICAS_MENSAL',
-        con=target_engine,           
-        schema=os.getenv('SCHEMA'),  
-       if_exists='append',          
-       index=False  
+    name='ESTATISTICAS_MENSAL',
+    con=target_engine,           
+    schema=os.getenv('SCHEMA'), 
+    if_exists='append',         
+    index=False   
 )
+
+
+
+print("Dados exportados para o PostgreSQL com sucesso!")
