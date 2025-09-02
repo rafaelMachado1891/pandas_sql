@@ -23,7 +23,7 @@ resultado AS (
              ELSE 'OK'
         END AS check_oc
     FROM compras a  
-    JOIN estatitsticas_produtos b
+    LEFT JOIN estatitsticas_produtos b
     ON a.codigo_produto = b.codigo
 )
 
