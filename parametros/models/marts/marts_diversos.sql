@@ -65,7 +65,7 @@ resultado_media_3_meses AS (
 	FROM media_movel_3_meses
 	WHERE
 		ano = EXTRACT(YEAR FROM CURRENT_DATE) AND
-		mes = EXTRACT(MONTH FROM CURRENT_DATE)
+		mes = EXTRACT(MONTH FROM CURRENT_DATE) -1 
 ),
 resultado_media_6_meses AS (
 	SELECT
@@ -77,7 +77,7 @@ resultado_media_6_meses AS (
 	FROM media_movel_6_meses
 	WHERE
 		ano = EXTRACT(YEAR FROM CURRENT_DATE) AND
-		mes = EXTRACT(MONTH FROM CURRENT_DATE)
+		mes = EXTRACT(MONTH FROM CURRENT_DATE) -1 
 ),
 resultado AS (
 	SELECT 
