@@ -1,21 +1,43 @@
 services:
   postgres:
-    image: postgres:latest
+    image: postgres:17
     container_name: parametros_db
     environment:
       POSTGRES_USER: ${USER_POSTGRES}
       POSTGRES_PASSWORD: ${PASSWORD_POSTGRES}  
       POSTGRES_DB: ${DB_POSTGRES}
     ports:
-      - "5433:5432"
+      - "5436:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init-scripts:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${USER_POSTGRES} -d parametrosdb"]
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - db_net
+      
+  pgadmin:
+      container_name: pgadmin_web
+      image: dpage/pgadmin4
+      environment:
+        PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+        PGADMIN_DEFAULT_PASSWORD: postgres
+        PGADMIN_LISTEN_PORT: 5050
+        PGADMIN_CONFIG_SERVER_MODE: 'False'
+      volumes:
+        - pgadmin_data:/var/lib/pgadmin
+        - ./files:/files
+      ports:
+        - 5050:5050
+      networks:
+        - db_net
+
+networks:
+    db_net:
+      driver: bridge
 
 volumes:
-  postgres_data:
+    postgres_data:
+    pgadmin_data:

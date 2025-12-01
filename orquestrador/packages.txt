@@ -1,0 +1,7 @@
+# Dependências para compilar e rodar ODBC + drivers
+gcc
+g++
+unixodbc
+unixodbc-dev
+curl
+apt-transport-https

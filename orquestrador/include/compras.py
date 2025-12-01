@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 from datetime import datetime
 
 def coletar_dados_compras():
+       
+    
     load_dotenv()
 
     username = os.getenv("DB_USERNAME")
